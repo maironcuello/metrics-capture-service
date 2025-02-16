@@ -1,0 +1,2 @@
+export const MAX_ERROR_MESSAGE_LENGTH = 65535;
+export const MAX_STACK_TRACE_LENGTH = 65535;
