@@ -1,13 +1,13 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { ErrorCaptureService } from './error-capture.service';
-import { ErrorLog } from './error-log.entity';
+import { ErrorLog } from './entities/error-log.entity';
 
 @Controller('api/error-capture')
 export class ErrorCaptureController {
     constructor(private readonly errorCaptureService: ErrorCaptureService) { }
 
     @Post('capture')
-    async captureError(@Body() errorLog: ErrorLog) {
+    async captureError(@Body() errorLog: Partial<ErrorLog>) {
         console.log(errorLog.serviceName, errorLog.errorMessage);
         await this.errorCaptureService.captureError(errorLog);
     }
@@ -20,5 +20,10 @@ export class ErrorCaptureController {
     @Get('errors/:name')
     async getErrorByName(name: string) {
         return this.errorCaptureService.getErrorByName(name);
+    }
+
+    @Get('trends')
+    async getErrorTrends() {
+        return this.errorCaptureService.getErrorTrends();
     }
 }

@@ -1,6 +1,6 @@
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { ErrorLog } from './error-log.entity';
+import { ErrorLog } from './entities/error-log.entity';
 
 @WebSocketGateway()
 export class ErrorCaptureGateway {
@@ -20,7 +20,7 @@ export class ErrorCaptureGateway {
         console.log('Client disconnected');
     }
 
-    broadcastError(error: ErrorLog) {
+    broadcastError(error: Partial<ErrorLog>) {
         this.server.emit('newError', error);
     }
 }

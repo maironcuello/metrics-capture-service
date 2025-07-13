@@ -2,12 +2,24 @@ import { Module } from '@nestjs/common';
 import { ErrorCaptureService } from './error-capture.service';
 import { ErrorCaptureController } from './error-capture.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ErrorLog } from './error-log.entity';
+import { ErrorLog } from './entities/error-log.entity';
 import { ErrorCaptureGateway } from './error-capture.gateway';
+import { ReportScheduler, ReportService } from 'src/common/service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { Subscription, SubscriptionModule } from 'src/subscription';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ErrorLog])],
-  providers: [ErrorCaptureService, ErrorCaptureGateway],
+  imports: [
+    TypeOrmModule.forFeature([ErrorLog, Subscription]),
+    ScheduleModule.forRoot({})
+  ],
+  providers: [
+    SubscriptionModule,
+    ErrorCaptureService, 
+    ErrorCaptureGateway, 
+    ReportService, 
+    ReportScheduler
+  ],
   controllers: [ErrorCaptureController],
 })
 export class ErrorCaptureModule {}
