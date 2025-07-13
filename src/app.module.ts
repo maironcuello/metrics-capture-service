@@ -4,12 +4,14 @@ import { ErrorCaptureModule } from './error-capture/error-capture.module';
 import { ConfigModule } from '@nestjs/config';
 import { SubscriptionModule } from './subscription/subscription.module';
 import configuration from './common/config/configuration';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
     }),
+    HttpModule.register({ global: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

@@ -5,13 +5,15 @@ import { ErrorLog } from './entities/error-log.entity';
 import { MAX_ERROR_MESSAGE_LENGTH, MAX_STACK_TRACE_LENGTH } from './constants';
 import { ErrorCaptureGateway } from './error-capture.gateway';
 import * as crypto from 'crypto';
+import { SubscriptionService } from 'src/subscription';
 
 @Injectable()
 export class ErrorCaptureService {
     constructor(
         @InjectRepository(ErrorLog)
         private errorLogRepository: Repository<ErrorLog>,
-        private errorCaptureGateway: ErrorCaptureGateway,
+        private subscriptionService: SubscriptionService,
+        // private errorCaptureGateway: ErrorCaptureGateway,
     ) { }
 
     private generateErrorHash(error: Partial<ErrorLog>): string {
@@ -34,6 +36,14 @@ export class ErrorCaptureService {
         if (existingError) {
             existingError.count += 1;
             existingError.lastOccurrence = new Date();
+
+            // Notificar a los suscriptores
+            await this.subscriptionService.notifySubscribers('error', {
+                event: 'error',
+                data: error,
+                timestamp: new Date().toISOString(),
+            });
+
             await this.errorLogRepository.save(existingError);
         } else {
             const newError = this.errorLogRepository.create({
@@ -43,7 +53,15 @@ export class ErrorCaptureService {
                 firstOccurrence: new Date(),
                 lastOccurrence: new Date(),
             });
+
             await this.errorLogRepository.save(newError);
+            
+            // Notificar a los suscriptores
+            await this.subscriptionService.notifySubscribers('error', {
+                event: 'error',
+                data: newError,
+                timestamp: new Date().toISOString(),
+            });
         }
     }
 
@@ -52,7 +70,7 @@ export class ErrorCaptureService {
         errorLog.errorMessage = this.truncateText(errorLog.errorMessage, MAX_ERROR_MESSAGE_LENGTH);
         errorLog.stackTrace = this.truncateText(errorLog.stackTrace || '', MAX_STACK_TRACE_LENGTH);
         await this.errorLogRepository.save(errorLog);
-        this.errorCaptureGateway.broadcastError(errorLog);
+        // this.errorCaptureGateway.broadcastError(errorLog);
 
     }
 

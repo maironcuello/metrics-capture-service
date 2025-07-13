@@ -7,9 +7,8 @@ export class ErrorCaptureController {
     constructor(private readonly errorCaptureService: ErrorCaptureService) { }
 
     @Post('capture')
-    async captureError(@Body() errorLog: Partial<ErrorLog>) {
-        console.log(errorLog.serviceName, errorLog.errorMessage);
-        await this.errorCaptureService.captureError(errorLog);
+    async captureError(@Body() dto: Partial<ErrorLog>) {
+        await this.errorCaptureService.captureErrorHash(dto);
     }
 
     @Get('errors')
@@ -26,4 +25,6 @@ export class ErrorCaptureController {
     async getErrorTrends() {
         return this.errorCaptureService.getErrorTrends();
     }
+
+    
 }

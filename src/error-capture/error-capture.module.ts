@@ -6,17 +6,18 @@ import { ErrorLog } from './entities/error-log.entity';
 import { ErrorCaptureGateway } from './error-capture.gateway';
 import { ReportScheduler, ReportService } from 'src/common/service';
 import { ScheduleModule } from '@nestjs/schedule';
-import { Subscription, SubscriptionModule } from 'src/subscription';
+import { Subscription, SubscriptionModule, SubscriptionService } from 'src/subscription';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ErrorLog, Subscription]),
-    ScheduleModule.forRoot({})
+    ScheduleModule.forRoot({}),
+    SubscriptionModule,
   ],
   providers: [
-    SubscriptionModule,
-    ErrorCaptureService, 
-    ErrorCaptureGateway, 
+    ErrorCaptureService,
+    SubscriptionService,
+    // ErrorCaptureGateway, 
     ReportService, 
     ReportScheduler
   ],
