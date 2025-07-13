@@ -1,5 +1,7 @@
 import * as path from 'path';
 import * as express from 'express';
+import * as fs from 'fs';
+import * as http2 from 'http2';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
@@ -24,15 +26,27 @@ async function bootstrap() {
   // Servir archivos estáticos de la aplicación React
   app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
-  // Permitir que las rutas de la API se manejen normalmente
-  // Redirigir todas las rutas que no son de la API a la aplicación React
-  app.use((req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
-      next(); 
-    } else {
-      res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-    }
-  });
+  
+    // Permitir que las rutas de la API se manejen normalmente
+    // Redirigir todas las rutas que no son de la API a la aplicación React
+    app.use((req, res, next) => {
+      if (req.originalUrl.startsWith('/api')) {
+        next(); 
+      } else {
+        res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+      }
+    });
+
+  // const httpsOptions = {
+  //   key: fs.readFileSync('./secrets/private-key.pem'),
+  //   cert: fs.readFileSync('./secrets/public-certificate.pem'),
+  //   allowHTTP1: true // Acepta tanto HTTP/1.1 como HTTP/2
+  // };
+
+  // const server = http2.createSecureServer(
+  //   httpsOptions,
+  //   app.getHttpAdapter().getInstance()
+  // );
 
   const PORT = configService.get<number>('PORT') || 3000;
   await app.listen(PORT);

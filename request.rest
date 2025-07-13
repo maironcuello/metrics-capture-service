@@ -1,0 +1,13 @@
+###
+POST http://localhost:3000/api/error-capture/capture HTTP/1.5
+content-type: application/json
+
+{
+    "serviceName": "prueba", 
+    "errorMessage": "string",
+    "stackTrace": "string"
+}
+
+###
+GET http://localhost:3000/api/error-capture/errors
+content-type: application/json

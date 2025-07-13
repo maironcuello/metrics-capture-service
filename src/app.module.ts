@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ErrorCaptureModule } from './error-capture/error-capture.module';
 import { ConfigModule } from '@nestjs/config';
-import configuration from './config/configuration';
+import { SubscriptionModule } from './subscription/subscription.module';
+import configuration from './common/config/configuration';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import configuration from './config/configuration';
       logging: false
     }),
     ErrorCaptureModule,
+    SubscriptionModule,
   ],
 })
 export class AppModule {}
